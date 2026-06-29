@@ -1,0 +1,168 @@
+{
+  "extName": {
+    "message": "Gemini AI Helper"
+  },
+  "extDescription": {
+    "message": "Analyze selected text or screen areas with Gemini in a Chrome side panel."
+  },
+  "captureAreaCommand": {
+    "message": "Capture an area for AI Assistant"
+  },
+  "clearChat": {
+    "message": "Clear chat"
+  },
+  "settingsButtonLabel": {
+    "message": "Settings"
+  },
+  "settingsTitle": {
+    "message": "Settings"
+  },
+  "settingsApiSection": {
+    "message": "API settings"
+  },
+  "settingsModelSection": {
+    "message": "AI model"
+  },
+  "settingsThemeSection": {
+    "message": "Chat theme"
+  },
+  "backToSettingsHub": {
+    "message": "← Back"
+  },
+  "backToChat": {
+    "message": "Back to chat"
+  },
+  "modelSectionIntro": {
+    "message": "Choose which Gemini model answers your messages."
+  },
+  "themeSectionIntro": {
+    "message": "Pick how the chat looks in the side panel."
+  },
+  "themeLabel": {
+    "message": "Theme"
+  },
+  "themeDark": {
+    "message": "Dark"
+  },
+  "themeLight": {
+    "message": "Light"
+  },
+  "themeSystem": {
+    "message": "System"
+  },
+  "apiSettings": {
+    "message": "API settings"
+  },
+  "settingsIntro": {
+    "message": "Paste your free Gemini API key below. It is stored only in this browser."
+  },
+  "apiKeyLabel": {
+    "message": "Gemini API key"
+  },
+  "apiKeyPlaceholder": {
+    "message": "AIza..."
+  },
+  "getApiKeyLink": {
+    "message": "Get a free API key from Google AI Studio"
+  },
+  "modelLabel": {
+    "message": "Model"
+  },
+  "saveSettings": {
+    "message": "Save"
+  },
+  "settingsSaved": {
+    "message": "Settings saved."
+  },
+  "keyStatusReady": {
+    "message": "Ready"
+  },
+  "keyStatusMissing": {
+    "message": "No key"
+  },
+  "selectOnPage": {
+    "message": "Select on page"
+  },
+  "textFromPage": {
+    "message": "Text from page"
+  },
+  "promptPlaceholder": {
+    "message": "Describe a task or question…"
+  },
+  "send": {
+    "message": "Send"
+  },
+  "thinking": {
+    "message": "Thinking…"
+  },
+  "pageTextLabel": {
+    "message": "Text from page"
+  },
+  "remove": {
+    "message": "Remove"
+  },
+  "pageTextBlock": {
+    "message": "Text from page"
+  },
+  "noSelection": {
+    "message": "Select text on the page first."
+  },
+  "unableToSend": {
+    "message": "Unable to send message."
+  },
+  "waitPreviousRequest": {
+    "message": "Please wait for the previous request to finish."
+  },
+  "contextExplain": {
+    "message": "Send to Gemini → Explain"
+  },
+  "contextTranslate": {
+    "message": "Send to Gemini → Translate"
+  },
+  "contextSummarize": {
+    "message": "Send to Gemini → Summarize"
+  },
+  "respondInPromptLanguage": {
+    "message": "Respond in the same language as my message below."
+  },
+  "analyzeImagePrompt": {
+    "message": "Analyze this image."
+  },
+  "regionSelected": {
+    "message": "Selected area ($1×$2$)",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "800"
+      },
+      "2": {
+        "content": "$2",
+        "example": "600"
+      }
+    }
+  },
+  "geminiUnavailable503": {
+    "message": "Gemini is temporarily overloaded. We retried automatically — please wait a moment and try again."
+  },
+  "geminiRateLimited": {
+    "message": "Gemini rate limit reached. Please wait a moment and try again."
+  },
+  "missingApiKey": {
+    "message": "Add your Gemini API key in Settings → API settings first."
+  },
+  "voiceInput": {
+    "message": "Voice input"
+  },
+  "voiceListening": {
+    "message": "Stop listening"
+  },
+  "voiceNotSupported": {
+    "message": "Voice input is not supported in this browser."
+  },
+  "voicePermissionDenied": {
+    "message": "Microphone access was denied. Allow the microphone in Chrome settings and try again."
+  },
+  "voiceError": {
+    "message": "Voice input failed. Please try again."
+  }
+}

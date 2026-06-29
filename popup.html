@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>API Settings</title>
+    <link rel="stylesheet" href="sidepanel.css">
+  </head>
+  <body>
+    <header class="header">
+      <h1 class="title">API Settings</h1>
+      <span id="keyStatus" class="status-badge">No key</span>
+    </header>
+
+    <section class="settings-view">
+      <p id="settingsIntro" class="settings-intro"></p>
+      <label for="apiKey" id="apiKeyLabel" class="settings-label"></label>
+      <input id="apiKey" class="settings-input" type="password" autocomplete="off" spellcheck="false">
+      <a id="getApiKeyLink" class="settings-link-block" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer"></a>
+      <label for="model" id="modelLabel" class="settings-label"></label>
+      <select id="model" class="settings-input settings-select"></select>
+      <button type="button" id="saveSettingsButton" class="btn-primary settings-save"></button>
+      <p id="message" class="settings-message" role="status"></p>
+    </section>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

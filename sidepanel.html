@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gemini AI Helper</title>
+    <link rel="stylesheet" href="sidepanel.css">
+  </head>
+  <body data-theme="dark">
+    <header class="header">
+      <h1 id="appTitle" class="title">Gemini AI Helper</h1>
+      <div class="header-actions">
+        <button type="button" id="clearButton" class="icon-btn" aria-label="Clear chat">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 6h18"></path>
+            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+            <line x1="10" x2="10" y1="11" y2="17"></line>
+            <line x1="14" x2="14" y1="11" y2="17"></line>
+          </svg>
+        </button>
+        <button type="button" id="settingsButton" class="icon-btn" aria-label="Settings">
+          <svg class="icon-gear" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.77 1 1.36 1.11H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div id="chatView" class="panel-view">
+      <div class="chat-stack">
+        <section id="settingsView" class="settings-dropdown hidden">
+          <div id="settingsHub" class="settings-hub">
+            <nav class="settings-nav settings-nav-hub">
+              <button type="button" class="settings-nav-item" data-section="api">
+                <span class="settings-nav-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"></path>
+                    <path d="m8.5 16.5-2.3-2.3a1 1 0 0 0-1.4 0l-2.1 2.1a1 1 0 0 0 0 1.4L5 20"></path>
+                    <path d="M2 7.5 7.5 2"></path>
+                    <path d="M16.5 22 22 16.5"></path>
+                    <path d="M7.5 2 2 7.5"></path>
+                    <path d="M22 16.5 16.5 22"></path>
+                  </svg>
+                </span>
+                <span id="navApiLabel" class="settings-nav-text"></span>
+              </button>
+              <button type="button" class="settings-nav-item" data-section="model">
+                <span class="settings-nav-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v3"></path>
+                    <path d="M12 18v3"></path>
+                    <path d="M3 12h3"></path>
+                    <path d="M18 12h3"></path>
+                    <rect x="7" y="7" width="10" height="10" rx="2"></rect>
+                    <path d="M9 12h6"></path>
+                    <path d="M12 9v6"></path>
+                  </svg>
+                </span>
+                <span id="navModelLabel" class="settings-nav-text"></span>
+              </button>
+              <button type="button" class="settings-nav-item" data-section="theme">
+                <span class="settings-nav-icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="13.5" cy="6.5" r="2.5"></circle>
+                    <circle cx="17.5" cy="10.5" r="2.5"></circle>
+                    <circle cx="8.5" cy="7.5" r="2.5"></circle>
+                    <circle cx="6.5" cy="12.5" r="2.5"></circle>
+                    <path d="M12 22c4.418 0 8-3.582 8-8 0-1.657-.505-3.198-1.37-4.47"></path>
+                  </svg>
+                </span>
+                <span id="navThemeLabel" class="settings-nav-text"></span>
+              </button>
+            </nav>
+          </div>
+
+          <div id="settingsSectionApi" class="settings-section hidden">
+            <button type="button" class="settings-back link-btn" data-target="hub"></button>
+            <h2 id="settingsApiTitle" class="settings-page-title"></h2>
+            <p id="settingsIntro" class="settings-intro"></p>
+            <label for="apiKeyInput" id="apiKeyLabel" class="settings-label"></label>
+            <input id="apiKeyInput" class="settings-input" type="password" autocomplete="off" spellcheck="false">
+            <a id="getApiKeyLink" class="settings-link-block" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer"></a>
+            <button type="button" id="saveApiButton" class="btn-primary settings-save"></button>
+          </div>
+
+          <div id="settingsSectionModel" class="settings-section hidden">
+            <button type="button" class="settings-back link-btn" data-target="hub"></button>
+            <h2 id="settingsModelTitle" class="settings-page-title"></h2>
+            <p id="modelSectionIntro" class="settings-intro"></p>
+            <label for="modelInput" id="modelLabel" class="settings-label"></label>
+            <select id="modelInput" class="settings-input settings-select"></select>
+            <button type="button" id="saveModelButton" class="btn-primary settings-save"></button>
+          </div>
+
+          <div id="settingsSectionTheme" class="settings-section hidden">
+            <button type="button" class="settings-back link-btn" data-target="hub"></button>
+            <h2 id="settingsThemeTitle" class="settings-page-title"></h2>
+            <p id="themeSectionIntro" class="settings-intro"></p>
+            <label for="themeInput" id="themeLabel" class="settings-label"></label>
+            <select id="themeInput" class="settings-input settings-select">
+              <option value="dark"></option>
+              <option value="light"></option>
+              <option value="system"></option>
+            </select>
+          </div>
+
+          <p id="settingsMessage" class="settings-message" role="status"></p>
+        </section>
+
+        <main id="chat" class="messages" aria-live="polite"></main>
+      </div>
+
+      <div id="attachmentPreview" class="attachment-preview hidden">
+        <img id="attachmentThumb" alt="" width="80" height="60">
+        <div class="attachment-meta">
+          <span id="attachmentLabel"></span>
+          <button type="button" id="attachmentRemove" class="link-btn"></button>
+        </div>
+      </div>
+
+      <div id="pageTextPreview" class="page-text-preview hidden">
+        <span id="pageTextLabel" class="page-text-label"></span>
+        <p id="pageTextSnippet"></p>
+        <button type="button" id="pageTextRemove" class="link-btn"></button>
+      </div>
+
+      <footer class="composer">
+        <div class="composer-actions">
+          <button type="button" id="captureButton" class="btn-secondary"></button>
+          <button type="button" id="selectionButton" class="btn-secondary"></button>
+          <button type="button" id="voiceButton" class="btn-secondary voice-btn" aria-pressed="false">
+            <svg class="voice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" x2="12" y1="19" y2="22"></line>
+            </svg>
+          </button>
+        </div>
+        <form id="composerForm">
+          <textarea id="promptInput" class="user-input" rows="3"></textarea>
+          <button type="submit" id="sendButton" class="btn-primary"></button>
+        </form>
+      </footer>
+    </div>
+
+    <script src="sidepanel.js"></script>
+  </body>
+</html>

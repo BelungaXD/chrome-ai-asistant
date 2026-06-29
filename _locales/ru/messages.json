@@ -1,0 +1,168 @@
+{
+  "extName": {
+    "message": "Gemini AI Helper"
+  },
+  "extDescription": {
+    "message": "Анализ выделенного текста и областей экрана с помощью Gemini в боковой панели Chrome."
+  },
+  "captureAreaCommand": {
+    "message": "Захватить область для AI Assistant"
+  },
+  "clearChat": {
+    "message": "Очистить чат"
+  },
+  "settingsButtonLabel": {
+    "message": "Настройки"
+  },
+  "settingsTitle": {
+    "message": "Настройки"
+  },
+  "settingsApiSection": {
+    "message": "Настройки API"
+  },
+  "settingsModelSection": {
+    "message": "Модель ИИ"
+  },
+  "settingsThemeSection": {
+    "message": "Тема чата"
+  },
+  "backToSettingsHub": {
+    "message": "← Назад"
+  },
+  "backToChat": {
+    "message": "Назад к чату"
+  },
+  "modelSectionIntro": {
+    "message": "Выберите модель Gemini для ответов."
+  },
+  "themeSectionIntro": {
+    "message": "Выберите оформление чата в боковой панели."
+  },
+  "themeLabel": {
+    "message": "Тема"
+  },
+  "themeDark": {
+    "message": "Тёмная"
+  },
+  "themeLight": {
+    "message": "Светлая"
+  },
+  "themeSystem": {
+    "message": "Системная"
+  },
+  "apiSettings": {
+    "message": "Настройки API"
+  },
+  "settingsIntro": {
+    "message": "Вставьте бесплатный ключ Gemini API. Он хранится только в этом браузере."
+  },
+  "apiKeyLabel": {
+    "message": "Ключ Gemini API"
+  },
+  "apiKeyPlaceholder": {
+    "message": "AIza..."
+  },
+  "getApiKeyLink": {
+    "message": "Получить бесплатный ключ в Google AI Studio"
+  },
+  "modelLabel": {
+    "message": "Модель"
+  },
+  "saveSettings": {
+    "message": "Сохранить"
+  },
+  "settingsSaved": {
+    "message": "Настройки сохранены."
+  },
+  "keyStatusReady": {
+    "message": "Готово"
+  },
+  "keyStatusMissing": {
+    "message": "Нет ключа"
+  },
+  "selectOnPage": {
+    "message": "Выделить на странице"
+  },
+  "textFromPage": {
+    "message": "Текст со страницы"
+  },
+  "promptPlaceholder": {
+    "message": "Опишите задачу или вопрос…"
+  },
+  "send": {
+    "message": "Отправить"
+  },
+  "thinking": {
+    "message": "Думаю…"
+  },
+  "pageTextLabel": {
+    "message": "Текст со страницы"
+  },
+  "remove": {
+    "message": "Убрать"
+  },
+  "pageTextBlock": {
+    "message": "Текст со страницы"
+  },
+  "noSelection": {
+    "message": "Сначала выделите текст на странице."
+  },
+  "unableToSend": {
+    "message": "Не удалось отправить сообщение."
+  },
+  "waitPreviousRequest": {
+    "message": "Подождите, идёт предыдущий запрос…"
+  },
+  "contextExplain": {
+    "message": "Отправить в Gemini → Объяснить"
+  },
+  "contextTranslate": {
+    "message": "Отправить в Gemini → Перевести"
+  },
+  "contextSummarize": {
+    "message": "Отправить в Gemini → Кратко"
+  },
+  "respondInPromptLanguage": {
+    "message": "Ответь на том же языке, что и моё сообщение ниже."
+  },
+  "analyzeImagePrompt": {
+    "message": "Проанализируй это изображение."
+  },
+  "regionSelected": {
+    "message": "Выделена область ($1×$2$)",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "800"
+      },
+      "2": {
+        "content": "$2",
+        "example": "600"
+      }
+    }
+  },
+  "geminiUnavailable503": {
+    "message": "Gemini временно перегружен. Повторные попытки уже были — подождите немного и попробуйте снова."
+  },
+  "geminiRateLimited": {
+    "message": "Достигнут лимит запросов Gemini. Подождите немного и попробуйте снова."
+  },
+  "missingApiKey": {
+    "message": "Сначала добавьте ключ Gemini API в Настройки → Настройки API."
+  },
+  "voiceInput": {
+    "message": "Голосовой ввод"
+  },
+  "voiceListening": {
+    "message": "Остановить запись"
+  },
+  "voiceNotSupported": {
+    "message": "Голосовой ввод не поддерживается в этом браузере."
+  },
+  "voicePermissionDenied": {
+    "message": "Доступ к микрофону запрещён. Разрешите микрофон в настройках Chrome и попробуйте снова."
+  },
+  "voiceError": {
+    "message": "Не удалось выполнить голосовой ввод. Попробуйте ещё раз."
+  }
+}
