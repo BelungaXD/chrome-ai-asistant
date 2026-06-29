@@ -356,14 +356,26 @@ body {
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
+  padding: 4px;
+  margin: -4px;
+  border-radius: 8px;
+  border: 1px dashed transparent;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.composer-actions.drag-over {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, var(--bg));
 }
 
 .composer-actions .btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  line-height: 1.2;
+  width: 30px;
+  min-width: 30px;
   min-height: 30px;
+  padding: 0;
 }
 
 .btn-secondary {
@@ -385,10 +397,22 @@ body {
   cursor: not-allowed;
 }
 
-.voice-btn .voice-icon {
+.voice-btn .voice-icon,
+.composer-actions .action-icon {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
+}
+
+.hidden-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
 
 .user-input {

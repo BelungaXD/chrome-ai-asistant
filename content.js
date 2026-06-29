@@ -5,6 +5,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({ ok: true });
     return false;
   }
+  if (message?.type === 'AI_ASSISTANT_GET_SELECTION') {
+    sendResponse({
+      ok: true,
+      text: window.getSelection()?.toString()?.trim() || ''
+    });
+    return false;
+  }
   if (message?.type === 'AI_ASSISTANT_START_CAPTURE') {
     startCapture(message.prompt || '');
     sendResponse({ ok: true });

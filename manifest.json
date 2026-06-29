@@ -3,7 +3,7 @@
   "name": "__MSG_extName__",
   "description": "__MSG_extDescription__",
   "default_locale": "en",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "permissions": [
     "activeTab",
     "contextMenus",
@@ -13,6 +13,7 @@
     "tabs"
   ],
   "host_permissions": [
+    "<all_urls>",
     "https://generativelanguage.googleapis.com/*"
   ],
   "action": {

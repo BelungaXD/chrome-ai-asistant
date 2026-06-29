@@ -15,6 +15,9 @@ const sendButton = document.querySelector('#sendButton');
 const composerForm = document.querySelector('#composerForm');
 const captureButton = document.querySelector('#captureButton');
 const selectionButton = document.querySelector('#selectionButton');
+const composerActions = document.querySelector('#composerActions');
+const uploadButton = document.querySelector('#uploadButton');
+const imageFileInput = document.querySelector('#imageFileInput');
 const pageTextPreview = document.querySelector('#pageTextPreview');
 const pageTextSnippet = document.querySelector('#pageTextSnippet');
 const pageTextRemove = document.querySelector('#pageTextRemove');
@@ -41,6 +44,43 @@ const DEFAULT_MODEL_FALLBACK = 'gemini-2.5-flash';
 
 function t(key, substitutions) {
   return chrome.i18n.getMessage(key, substitutions) || key;
+}
+
+function tabHost(url = '') {
+  try {
+    return new URL(url).host || url;
+  } catch {
+    return url || 'unknown';
+  }
+}
+
+function isRestrictedTabUrl(url = '') {
+  if (!url || url.startsWith('about:')) {
+    return true;
+  }
+  return (
+    url.startsWith('chrome://') ||
+    url.startsWith('chrome-extension://') ||
+    url.startsWith('edge://') ||
+    url.startsWith('https://chromewebstore.google.com')
+  );
+}
+
+function getRestrictedTabError(url = '') {
+  if (!url || url.startsWith('about:')) {
+    return t('restrictedNoUrl');
+  }
+  if (isRestrictedTabUrl(url)) {
+    return t('restrictedInternalPage', tabHost(url));
+  }
+  return '';
+}
+
+async function getSidePanelTargetTab() {
+  const win = await chrome.windows.getCurrent({ populate: true });
+  const tabs = win.tabs || [];
+  const activeTab = tabs.find((tab) => tab.active) || tabs[0] || null;
+  return activeTab;
 }
 
 function applyI18n() {
@@ -73,8 +113,10 @@ function applyI18n() {
   themeInput.querySelector('option[value="dark"]').textContent = t('themeDark');
   themeInput.querySelector('option[value="light"]').textContent = t('themeLight');
   themeInput.querySelector('option[value="system"]').textContent = t('themeSystem');
-  captureButton.textContent = t('selectOnPage');
-  selectionButton.textContent = t('textFromPage');
+  captureButton.setAttribute('aria-label', t('selectOnPage'));
+  selectionButton.setAttribute('aria-label', t('textFromPage'));
+  uploadButton.setAttribute('aria-label', t('uploadImage'));
+  composerActions.title = t('dropImageHint');
   promptInput.placeholder = t('promptPlaceholder');
   sendButton.textContent = t('send');
   voiceButton.setAttribute('aria-label', t('voiceInput'));
@@ -171,6 +213,18 @@ promptInput.addEventListener('keydown', (event) => {
 
 voiceButton.addEventListener('click', () => {
   toggleVoiceInput();
+});
+
+uploadButton.addEventListener('click', () => {
+  imageFileInput.click();
+});
+
+imageFileInput.addEventListener('change', async () => {
+  const file = imageFileInput.files?.[0];
+  imageFileInput.value = '';
+  if (file) {
+    await attachImageFromFile(file);
+  }
 });
 
 document.querySelector('#clearButton').addEventListener('click', () => {
@@ -339,7 +393,12 @@ async function refreshKeyStatus() {
 
 captureButton.addEventListener('click', async () => {
   try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tab = await getSidePanelTargetTab();
+    const restricted = getRestrictedTabError(tab?.url);
+    if (restricted) {
+      appendMessage('error', restricted);
+      return;
+    }
     const response = await chrome.runtime.sendMessage({
       type: 'AI_ASSISTANT_CAPTURE_AREA',
       tabId: tab?.id
@@ -354,7 +413,16 @@ captureButton.addEventListener('click', async () => {
 
 selectionButton.addEventListener('click', async () => {
   try {
-    const response = await chrome.runtime.sendMessage({ type: 'AI_ASSISTANT_GET_PAGE_SELECTION' });
+    const tab = await getSidePanelTargetTab();
+    const restricted = getRestrictedTabError(tab?.url);
+    if (restricted) {
+      appendMessage('error', restricted);
+      return;
+    }
+    const response = await chrome.runtime.sendMessage({
+      type: 'AI_ASSISTANT_GET_PAGE_SELECTION',
+      tabId: tab?.id
+    });
     if (!response?.ok) {
       throw new Error(response?.error || t('noSelection'));
     }
@@ -373,6 +441,36 @@ pageTextRemove.addEventListener('click', () => {
 attachmentRemove.addEventListener('click', () => {
   clearAttachment();
   chat.querySelectorAll('.msg-attach-draft').forEach((node) => node.closest('.msg')?.remove());
+});
+
+composerActions.addEventListener('dragenter', (event) => {
+  if (hasDraggedImage(event.dataTransfer)) {
+    event.preventDefault();
+    composerActions.classList.add('drag-over');
+  }
+});
+
+composerActions.addEventListener('dragover', (event) => {
+  if (hasDraggedImage(event.dataTransfer)) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    composerActions.classList.add('drag-over');
+  }
+});
+
+composerActions.addEventListener('dragleave', (event) => {
+  if (!composerActions.contains(event.relatedTarget)) {
+    composerActions.classList.remove('drag-over');
+  }
+});
+
+composerActions.addEventListener('drop', async (event) => {
+  event.preventDefault();
+  composerActions.classList.remove('drag-over');
+  const file = getDroppedImageFile(event.dataTransfer);
+  if (file) {
+    await attachImageFromFile(file);
+  }
 });
 
 async function sendPrompt() {
@@ -442,10 +540,53 @@ function updateAttachmentUI() {
 
   attachmentPreview.classList.remove('hidden');
   attachmentThumb.src = pendingAttachment.imageDataUrl;
-  attachmentLabel.textContent = t('regionSelected', [
+  const labelKey = pendingAttachment.source === 'file' ? 'attachedImage' : 'regionSelected';
+  attachmentLabel.textContent = t(labelKey, [
     String(pendingAttachment.width),
     String(pendingAttachment.height)
   ]);
+}
+
+function hasDraggedImage(dataTransfer) {
+  return [...dataTransfer.items].some((item) => item.kind === 'file' && item.type.startsWith('image/'));
+}
+
+function getDroppedImageFile(dataTransfer) {
+  return [...dataTransfer.files].find((file) => file.type.startsWith('image/')) || null;
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+function getImageDimensions(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+    image.onerror = () => reject(new Error('Image load failed'));
+    image.src = dataUrl;
+  });
+}
+
+async function attachImageFromFile(file) {
+  if (!file.type.startsWith('image/')) {
+    appendMessage('error', t('imageDropInvalid'));
+    return;
+  }
+
+  try {
+    const imageDataUrl = await readFileAsDataUrl(file);
+    const { width, height } = await getImageDimensions(imageDataUrl);
+    setAttachment({ imageDataUrl, width, height, source: 'file' });
+    appendChatAttachment(imageDataUrl);
+  } catch {
+    appendMessage('error', t('imageDropFailed'));
+  }
 }
 
 function setSending(value) {
@@ -454,6 +595,7 @@ function setSending(value) {
   promptInput.disabled = value;
   captureButton.disabled = value;
   selectionButton.disabled = value;
+  uploadButton.disabled = value;
   voiceButton.disabled = value;
   if (value) {
     stopVoiceInput();
@@ -506,7 +648,6 @@ function initSpeechRecognition() {
       return;
     }
     if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-      appendMessage('error', t('voicePermissionDenied'));
       return;
     }
     appendMessage('error', t('voiceError'));
@@ -545,6 +686,16 @@ function toggleVoiceInput() {
     return;
   }
 
+  void startVoiceInput();
+}
+
+async function startVoiceInput() {
+  const micReady = await ensureMicrophoneAccess();
+  if (!micReady) {
+    appendMessage('error', t('voicePermissionDenied'));
+    return;
+  }
+
   voiceBaseText = promptInput.value.trim();
   speechRecognition.lang = getSpeechRecognitionLocale();
 
@@ -553,6 +704,20 @@ function toggleVoiceInput() {
   } catch {
     stopVoiceInput();
     appendMessage('error', t('voiceError'));
+  }
+}
+
+async function ensureMicrophoneAccess() {
+  if (!navigator.mediaDevices?.getUserMedia) {
+    return true;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach((track) => track.stop());
+    return true;
+  } catch {
+    return false;
   }
 }
 

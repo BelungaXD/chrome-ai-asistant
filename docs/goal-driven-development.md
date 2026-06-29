@@ -2,50 +2,52 @@
 
 ## Goal
 
-Implement `/home/ssf/Documents/Github/AIAssistant.md` as a Chrome extension in `/home/ssf/Documents/Github/chrome-ai-assistant` and initialize the folder as a git repository.
+Chrome Manifest V3 extension **Gemini AI Helper** — analyze visible web content with Google Gemini from a side panel.
 
 ## Intent Preservation Chain
 
-- Vision: AI Assistant helps users analyze visible web content with Gemini.
-- Goal Impact: Users can submit typed text, selected text, or a cropped screenshot without leaving the current tab.
-- System: Chrome Manifest V3 extension.
-- Feature: Popup, side panel, context menu, screenshot cropper, Gemini API integration, local history, prompt template storage.
-- Task: Create the repo implementation from the spec.
-- Execution Plan: Keep implementation framework-free and directly loadable through `chrome://extensions`.
-- Coding Prompt: Build the extension components listed in the spec and preserve API key security through local Chrome storage.
-- Code: `manifest.json`, `background.js`, `content.js`, `popup.*`, `sidepanel.*`, `README.md`.
-- Validation: Static JSON parse and JavaScript syntax checks; Chrome manual load test is still required in a browser profile.
-
-## Parallel Execution
-
-| Workstream | Status | Owner | Scope | Shared Files | Validation |
-| --- | --- | --- | --- | --- | --- |
-| UI popup and side panel | ready_parallel | UI sub-agent | Review UI expectations and hand off checklist | None, handoff only | Manual popup/side panel smoke test |
-| Gemini service worker | ready_parallel | Background sub-agent | Review API/context menu expectations and hand off checklist | None, handoff only | Syntax check and API error handling review |
-| Screenshot content tool | ready_parallel | Screenshot sub-agent | Review cropper expectations and hand off checklist | None, handoff only | Manual page overlay/crop test |
-| Integration | final integration | Orchestrator | Write files, validate, git status | All implementation files | Static validation |
+- Vision: AI assistant for fast page and screenshot analysis without leaving the tab.
+- Goal Impact: Typed prompts, page selection, images, and cropped screenshots reach Gemini in one side panel.
+- System: Manifest V3 extension (no bundler).
+- Feature: Side panel chat, context menu, screen cropper, image upload/drag-drop, voice input, settings hub, Gemini streaming, local request log, built-in extension help.
+- Code: `manifest.json`, `background.js`, `content.js`, `sidepanel.*`, `popup.*`, `_locales/en/`, `README.md`.
+- Validation: Static syntax checks + manual Chrome smoke tests.
 
 ## Acceptance Mapping
 
-- Extension installs in Chrome developer mode: implementation is no-build Manifest V3; manual Chrome load still required.
-- Screen area selection: `content.js` overlay sends crop coordinates; `background.js` captures and crops the visible tab.
-- Gemini answers image/text prompts: `background.js` sends text and PNG inline data to Gemini streaming endpoint.
-- Answer language follows user request: default prompt asks to use request language or Russian by default.
-- Site layout isolation: cropper uses a Shadow DOM root and removes itself on completion or Escape.
+| Requirement | Implementation |
+| --- | --- |
+| Loads in Chrome developer mode | No-build MV3 folder; `chrome://extensions` → Load unpacked |
+| Screen area selection | `content.js` Shadow DOM overlay → crop coords → `background.js` captures visible tab and crops |
+| Crop attaches before send | `AI_ASSISTANT_ATTACHMENT_READY` → side panel composer; user sends via `AI_ASSISTANT_TEXT_PROMPT` |
+| Gemini text/image prompts | `background.js` → `streamGenerateContent` SSE with non-streaming fallback |
+| Answer language | `respondInPromptLanguage` prepended to user prompt |
+| Layout isolation | Cropper in closed Shadow DOM; removed on complete or Escape |
+| Context menu actions | Explain / translate / summarize on selection → immediate Gemini call |
+| API key security | `chrome.storage.local` only; never in repo |
+| Model resilience | Legacy model map, fallback model list, 429/503 retries |
+| Extension help in chat | `extensionSystemInstruction` in `_locales/en` sent as Gemini system instruction |
+| Restricted pages | i18n errors for `chrome://`, Web Store, `about:` tabs |
+| Content script on old tabs | `ensureContentScript` via `chrome.scripting.executeScript` + `<all_urls>` |
+| Page selection | `content.js` `AI_ASSISTANT_GET_SELECTION`; side panel passes browser-window tab id |
+| Composer UI | Icon toolbar (crop, page text, upload, voice) with drag-drop zone |
+| i18n | `_locales/en` only |
 
 ## Validation Commands
 
-Run from `/home/ssf/Documents/Github/chrome-ai-assistant`:
+From project root:
 
 ```bash
 node -e "JSON.parse(require('fs').readFileSync('manifest.json','utf8')); for (const f of ['background.js','content.js','popup.js','sidepanel.js']) new Function(require('fs').readFileSync(f,'utf8')); console.log('static validation ok')"
 git status --short --branch
 ```
 
-## Manual Validation Still Needed
+## Manual Validation
 
 - Load unpacked extension in Chrome.
-- Save a real Gemini API key.
-- Submit a typed prompt.
-- Select text on a page and run each context menu action.
-- Capture a screen area and confirm Gemini receives the cropped image.
+- Save a Gemini API key in Settings → API settings.
+- Send a typed prompt; confirm streaming.
+- Context menu on selected text (all three actions).
+- Capture screen area → image in composer → send with prompt.
+- Upload/drop image; voice input if supported.
+- Ask "How do I change the model?" — answer should match extension UI.

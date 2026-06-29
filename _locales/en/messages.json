@@ -141,6 +141,31 @@
       }
     }
   },
+  "attachedImage": {
+    "message": "Image ($1×$2$)",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "800"
+      },
+      "2": {
+        "content": "$2",
+        "example": "600"
+      }
+    }
+  },
+  "dropImageHint": {
+    "message": "Drop an image here or use the upload button"
+  },
+  "uploadImage": {
+    "message": "Upload image"
+  },
+  "imageDropInvalid": {
+    "message": "Only image files can be dropped here."
+  },
+  "imageDropFailed": {
+    "message": "Could not load the dropped image. Please try another file."
+  },
   "geminiUnavailable503": {
     "message": "Gemini is temporarily overloaded. We retried automatically — please wait a moment and try again."
   },
@@ -160,9 +185,33 @@
     "message": "Voice input is not supported in this browser."
   },
   "voicePermissionDenied": {
-    "message": "Microphone access was denied. Allow the microphone in Chrome settings and try again."
+    "message": "Microphone access was denied. In Chrome, open Settings → Privacy and security → Site settings → Microphone, and allow this extension."
   },
   "voiceError": {
     "message": "Voice input failed. Please try again."
+  },
+  "restrictedNoUrl": {
+    "message": "Open a normal website tab first, then try again."
+  },
+  "restrictedInternalPage": {
+    "message": "Page tools do not work on $1$. Click the website tab you want to analyze, then try again.",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "chrome://extensions"
+      }
+    }
+  },
+  "pageScriptingDenied": {
+    "message": "Cannot access $1$. Reload the extension if you just updated permissions, then try again.",
+    "placeholders": {
+      "1": {
+        "content": "$1",
+        "example": "gemini.google.com"
+      }
+    }
+  },
+  "extensionSystemInstruction": {
+    "message": "You are the in-extension help assistant for \"Gemini AI Helper\" — a Chrome side panel extension powered by Gemini.\n\nBehavior rules:\n- When the user asks how to use or configure THIS extension, answer using the guide below.\n- For all other tasks (text analysis, translation, summarization, image or screenshot analysis), help normally.\n- Never ask the user to paste their API key in chat. Never repeat or reveal an API key.\n- If the guide does not cover a setting or feature, say you do not know — do not invent UI screens.\n\nExtension usage guide:\n\nAPI key:\n1. Open the side panel (click the extension icon).\n2. Click the gear icon (Settings) in the header.\n3. Open \"API settings\".\n4. Paste your Gemini API key and click Save.\nThe key is stored locally in Chrome only. Get a free key at https://aistudio.google.com/apikey\n\nAI model:\nSettings → \"AI model\" → choose a model → Save.\n\nChat theme:\nSettings → \"Chat theme\" → choose Dark, Light, or System.\n\nScreenshot area capture:\nClick the crop button in the composer, or press Alt+Shift+A, then drag to select an area on the page.\n\nText from a web page:\nClick \"Select on page\" in the composer, then select text on the active tab.\n\nImage upload:\nClick the upload button in the composer, or drag and drop an image onto the composer area.\n\nVoice input:\nClick the microphone button in the composer.\n\nContext menu (selected text on a page):\nRight-click selected text → \"Send to Gemini → Explain\", \"Translate\", or \"Summarize\".\n\nClear chat:\nClick the trash icon in the side panel header.\n\nAlternative settings page:\nAn options page (popup.html) exists in extension settings, but the main interface is the side panel."
   }
 }

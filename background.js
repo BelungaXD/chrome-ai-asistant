@@ -77,7 +77,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   (async () => {
     if (message?.type === 'AI_ASSISTANT_CAPTURE_AREA') {
-      const tab = await resolveCaptureTab(message.tabId);
+      const tab = await resolveTargetTab(message.tabId);
       await startAreaCapture(tab, message.prompt);
       sendResponse({ ok: true });
       return;
@@ -134,36 +134,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     if (message?.type === 'AI_ASSISTANT_GET_PAGE_SELECTION') {
-      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      if (!tab?.id) {
-        throw new Error('No active tab is available.');
-      }
-      const restrictedMessage = getRestrictedTabMessage(tab.url);
-      if (restrictedMessage) {
-        throw new Error(restrictedMessage);
-      }
-      const [{ result }] = await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: () => window.getSelection()?.toString()?.trim() || ''
-      });
+      const tab = await resolveTargetTab(message.tabId);
+      const result = await getPageSelectionText(tab.id, tab.url);
       if (!result) {
         throw new Error(chrome.i18n.getMessage('noSelection'));
       }
       sendResponse({ ok: true, text: result });
+      return;
     }
   })().catch((error) => {
-    postPanelMessage({ type: 'AI_ASSISTANT_ERROR', error: error.message });
     sendResponse({ ok: false, error: error.message });
   });
   return true;
 });
 
-async function resolveCaptureTab(tabId) {
+async function resolveTargetTab(tabId) {
   let tab;
   if (tabId) {
     tab = await chrome.tabs.get(tabId);
   } else {
-    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [activeTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
     tab = activeTab;
   }
   if (!tab?.id) {
@@ -176,9 +166,17 @@ async function resolveCaptureTab(tabId) {
   return tab;
 }
 
+function tabHost(url = '') {
+  try {
+    return new URL(url).host || url;
+  } catch {
+    return url || 'unknown';
+  }
+}
+
 function getRestrictedTabMessage(url = '') {
   if (!url || url.startsWith('about:')) {
-    return 'Screen capture needs a normal website tab. Open a page and try again.';
+    return chrome.i18n.getMessage('restrictedNoUrl');
   }
   if (
     url.startsWith('chrome://') ||
@@ -186,12 +184,20 @@ function getRestrictedTabMessage(url = '') {
     url.startsWith('edge://') ||
     url.startsWith('https://chromewebstore.google.com')
   ) {
-    return 'Screen capture does not work on browser internal pages. Open a normal website tab first.';
+    return chrome.i18n.getMessage('restrictedInternalPage', tabHost(url));
   }
   return '';
 }
 
-async function ensureContentScript(tabId) {
+function normalizeScriptingError(error, url = '') {
+  const message = error?.message || String(error);
+  if (/Extension manifest must request permission/i.test(message)) {
+    return chrome.i18n.getMessage('pageScriptingDenied', tabHost(url));
+  }
+  return message;
+}
+
+async function ensureContentScript(tabId, tabUrl = '') {
   try {
     const response = await chrome.tabs.sendMessage(tabId, { type: 'AI_ASSISTANT_PING' });
     if (response?.ok) {
@@ -201,14 +207,34 @@ async function ensureContentScript(tabId) {
     // Content script is not loaded on this tab yet.
   }
 
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    files: ['content.js']
-  });
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      files: ['content.js']
+    });
+  } catch (error) {
+    throw new Error(normalizeScriptingError(error, tabUrl));
+  }
+}
+
+async function getPageSelectionText(tabId, tabUrl = '') {
+  try {
+    const response = await chrome.tabs.sendMessage(tabId, { type: 'AI_ASSISTANT_GET_SELECTION' });
+    if (response?.ok) {
+      return response.text || '';
+    }
+  } catch {
+    await ensureContentScript(tabId, tabUrl);
+    const response = await chrome.tabs.sendMessage(tabId, { type: 'AI_ASSISTANT_GET_SELECTION' });
+    if (response?.ok) {
+      return response.text || '';
+    }
+  }
+  return '';
 }
 
 async function startAreaCapture(tab, prompt = '') {
-  await ensureContentScript(tab.id);
+  await ensureContentScript(tab.id, tab.url);
   await chrome.tabs.sendMessage(tab.id, {
     type: 'AI_ASSISTANT_START_CAPTURE',
     prompt
@@ -301,7 +327,11 @@ async function sendToGemini({ tabId, prompt, imageDataUrl, source }) {
     });
   }
 
+  const systemInstruction = chrome.i18n.getMessage('extensionSystemInstruction');
   const requestBody = {
+    ...(systemInstruction ? {
+      systemInstruction: { parts: [{ text: systemInstruction }] }
+    } : {}),
     contents: [{ role: 'user', parts }],
     generationConfig: {
       temperature: 0.3
