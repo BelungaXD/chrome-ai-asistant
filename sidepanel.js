@@ -84,8 +84,7 @@ async function getSidePanelTargetTab() {
 }
 
 function applyI18n() {
-  const uiLanguage = chrome.i18n.getUILanguage().split('-')[0];
-  document.documentElement.lang = uiLanguage;
+  document.documentElement.lang = 'en';
   document.title = t('extName');
 
   document.querySelector('#appTitle').textContent = t('extName');
@@ -120,7 +119,7 @@ function applyI18n() {
   promptInput.placeholder = t('promptPlaceholder');
   sendButton.textContent = t('send');
   voiceButton.setAttribute('aria-label', t('voiceInput'));
-  document.querySelector('#pageTextLabel').textContent = t('pageTextLabel');
+  document.querySelector('#pageTextLabel').textContent = t('textFromPage');
   pageTextRemove.textContent = t('remove');
   attachmentRemove.textContent = t('remove');
 }
@@ -282,7 +281,6 @@ async function savePartialSettings(partial) {
         geminiApiKey: partial.geminiApiKey ?? current.settings?.geminiApiKey ?? '',
         geminiModel: partial.geminiModel ?? current.settings?.geminiModel ?? DEFAULT_MODEL_FALLBACK,
         chatTheme: partial.chatTheme ?? current.settings?.chatTheme ?? 'dark',
-        customPrompts: []
       }
     });
     if (!response?.ok) {
@@ -488,7 +486,7 @@ async function sendPrompt() {
 
   let composedPrompt = prompt;
   if (pageText) {
-    const block = `[${t('pageTextBlock')}]\n${pageText}`;
+    const block = `[${t('textFromPage')}]\n${pageText}`;
     composedPrompt = composedPrompt ? `${composedPrompt}\n\n${block}` : block;
   }
 
@@ -602,20 +600,6 @@ function setSending(value) {
   }
 }
 
-function getSpeechRecognitionLocale() {
-  const ui = chrome.i18n.getUILanguage();
-  if (ui.startsWith('ru')) {
-    return 'ru-RU';
-  }
-  if (ui.startsWith('cs')) {
-    return 'cs-CZ';
-  }
-  if (ui.startsWith('en')) {
-    return 'en-US';
-  }
-  return ui;
-}
-
 function initSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
@@ -627,7 +611,7 @@ function initSpeechRecognition() {
   speechRecognition = new SpeechRecognition();
   speechRecognition.continuous = true;
   speechRecognition.interimResults = true;
-  speechRecognition.lang = getSpeechRecognitionLocale();
+  speechRecognition.lang = 'en-US';
 
   speechRecognition.onstart = () => {
     isListening = true;
@@ -697,7 +681,7 @@ async function startVoiceInput() {
   }
 
   voiceBaseText = promptInput.value.trim();
-  speechRecognition.lang = getSpeechRecognitionLocale();
+  speechRecognition.lang = 'en-US';
 
   try {
     speechRecognition.start();

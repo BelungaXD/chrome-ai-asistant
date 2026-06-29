@@ -14,9 +14,6 @@
   "settingsButtonLabel": {
     "message": "Settings"
   },
-  "settingsTitle": {
-    "message": "Settings"
-  },
   "settingsApiSection": {
     "message": "API settings"
   },
@@ -49,9 +46,6 @@
   },
   "themeSystem": {
     "message": "System"
-  },
-  "apiSettings": {
-    "message": "API settings"
   },
   "settingsIntro": {
     "message": "Paste your free Gemini API key below. It is stored only in this browser."
@@ -95,14 +89,8 @@
   "thinking": {
     "message": "Thinking…"
   },
-  "pageTextLabel": {
-    "message": "Text from page"
-  },
   "remove": {
     "message": "Remove"
-  },
-  "pageTextBlock": {
-    "message": "Text from page"
   },
   "noSelection": {
     "message": "Select text on the page first."

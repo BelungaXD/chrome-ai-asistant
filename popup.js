@@ -67,8 +67,7 @@ async function saveSettings() {
       type: 'AI_ASSISTANT_SAVE_SETTINGS',
       settings: {
         geminiApiKey: apiKeyInput.value.trim(),
-        geminiModel: modelInput.value || DEFAULT_MODEL,
-        customPrompts: []
+        geminiModel: modelInput.value || DEFAULT_MODEL
       }
     });
     if (!response?.ok) {

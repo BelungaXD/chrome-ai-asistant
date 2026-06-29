@@ -120,16 +120,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       await chrome.storage.local.set({
         geminiApiKey: message.settings?.geminiApiKey ?? current.geminiApiKey,
         geminiModel: message.settings?.geminiModel ?? current.geminiModel,
-        chatTheme: message.settings?.chatTheme ?? current.chatTheme,
-        customPrompts: message.settings?.customPrompts ?? current.customPrompts
+        chatTheme: message.settings?.chatTheme ?? current.chatTheme
       });
       sendResponse({ ok: true });
-      return;
-    }
-
-    if (message?.type === 'AI_ASSISTANT_GET_HISTORY') {
-      const { history = [] } = await chrome.storage.local.get('history');
-      sendResponse({ ok: true, history });
       return;
     }
 
@@ -513,7 +506,7 @@ async function listAvailableModels(apiKey) {
 }
 
 async function getSettings() {
-  const settings = await chrome.storage.local.get(['geminiApiKey', 'geminiModel', 'chatTheme', 'customPrompts']);
+  const settings = await chrome.storage.local.get(['geminiApiKey', 'geminiModel', 'chatTheme']);
   const geminiModel = LEGACY_MODEL_MAP[settings.geminiModel] || settings.geminiModel || DEFAULT_MODEL;
   if (settings.geminiModel && geminiModel !== settings.geminiModel) {
     await chrome.storage.local.set({ geminiModel });
@@ -521,8 +514,7 @@ async function getSettings() {
   return {
     geminiApiKey: settings.geminiApiKey || '',
     geminiModel,
-    chatTheme: settings.chatTheme || 'dark',
-    customPrompts: Array.isArray(settings.customPrompts) ? settings.customPrompts : []
+    chatTheme: settings.chatTheme || 'dark'
   };
 }
 
